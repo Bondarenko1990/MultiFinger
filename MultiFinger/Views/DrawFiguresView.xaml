@@ -1,0 +1,202 @@
+﻿<UserControl
+    x:Class="MultiFinger.Views.DrawFiguresView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MultiFinger.Controls"
+    xmlns:converters="clr-namespace:MultiFinger.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uiExtensions="clr-namespace:MultiFinger.Helpers.UiExtensions"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/FigureStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+            <converters:IndexOffsetConverter x:Key="IndexOffsetConverter" />
+
+            <ControlTemplate x:Key="SearchToggleButtonTemplate" TargetType="ToggleButton">
+                <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                    <Border
+                        x:Name="Border"
+                        Background="#FFDDDDDD"
+                        CornerRadius="20">
+                        <TextBlock
+                            x:Name="ContentTextBlock"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe MDL2 Assets"
+                            Foreground="{TemplateBinding Foreground}"
+                            Text="{TemplateBinding Content}" />
+                    </Border>
+                    <Popup
+                        x:Name="SearchPopup"
+                        Focusable="False"
+                        IsOpen="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        Placement="Bottom"
+                        PlacementTarget="{Binding ElementName=ContentTextBlock}"
+                        PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                        StaysOpen="False">
+                        <Border
+                            Height="200"
+                            Padding="0"
+                            BorderBrush="Black"
+                            BorderThickness="1">
+                            <ListView
+                                x:Name="FiguresListView"
+                                Grid.Row="1"
+                                Width="70"
+                                Margin="0"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding Items, Mode=OneWay}"
+                                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=FiguresListView, Path=SelectedItem}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                Margin="0,0,8,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="Black"
+                                                Text="{Binding Key.Number, Converter={StaticResource IndexOffsetConverter}}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+                <ControlTemplate.Triggers>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True" />
+                            <Condition Property="IsChecked" Value="True" />
+                        </MultiTrigger.Conditions>
+                        <Setter TargetName="Border" Property="Opacity" Value="0.85" />
+                    </MultiTrigger>
+
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True" />
+                            <Condition Property="IsChecked" Value="False" />
+                        </MultiTrigger.Conditions>
+                        <Setter TargetName="ContentTextBlock" Property="Opacity" Value="0.85" />
+                        <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                    </MultiTrigger>
+
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform CenterX="0" CenterY="0" ScaleX="0.9" ScaleY="0.9" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                    </Trigger>
+
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                        <Setter Property="Foreground" Value="Black" />
+                    </Trigger>
+
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="ContentTextBlock" Property="Opacity" Value="0.2" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding InitializeViewModelCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <controls:GraphicViewer
+            x:Name="FiguresControl"
+            Grid.ColumnSpan="2"
+            Items="{Binding Figures, Mode=OneWay}"
+            ShowTransformedData="{Binding ShowTransformedData, Mode=OneWay}" />
+
+        <StackPanel
+            Margin="10,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+
+            <StackPanel Margin="10" Orientation="Vertical">
+                <TextBlock>
+                    <Run Text="Sample :" />
+                    <Run Text="{Binding SelectedIndex, Mode=OneWay, Converter={StaticResource IndexOffsetConverter}}" />
+                </TextBlock>
+
+                <ToggleButton
+                    x:Name="SearchButton"
+                    Margin="0,10,0,0"
+                    Padding="8"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    uiExtensions:OneCheckToogleButtonExtension.IsActive="True"
+                    uiExtensions:OneCheckToogleButtonExtension.IsChecked="{Binding ElementName=SearchButton, Path=IsChecked, Mode=TwoWay}"
+                    Content="&#xE71E;"
+                    Template="{StaticResource SearchToggleButtonTemplate}"
+                    ToolTip="Open samples" />
+            </StackPanel>
+
+            <StackPanel Margin="10" Orientation="Vertical">
+                <TextBlock>
+                    <Run Text="Offset from center :" />
+                    <Run Text="{Binding OffsetFromCenter, Mode=OneWay, Converter={StaticResource DoubleToStringConverter}}" />
+                </TextBlock>
+
+                <Button
+                    Margin="0,10,0,0"
+                    Command="{Binding SaveTranformedDataCommand}"
+                    Content="Save transformed data" />
+            </StackPanel>
+        </StackPanel>
+
+
+        <StackPanel
+            Grid.Column="1"
+            Margin="10,10,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <CheckBox
+                Margin="10,0,0,0"
+                Content="Show X axis"
+                IsChecked="{Binding IsVisibleAxisX, Mode=TwoWay}" />
+
+            <CheckBox
+                Margin="10,0,0,0"
+                Content="Show Y axis"
+                IsChecked="{Binding IsVisibleAxisY, Mode=TwoWay}" />
+
+            <CheckBox
+                Margin="10,0,0,0"
+                Content="Show transformed data"
+                IsChecked="{Binding ShowTransformedData, Mode=TwoWay}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,84 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MultiFinger.Controls"
+    xmlns:converters="clr-namespace:MultiFinger.Converters"
+    xmlns:figures="clr-namespace:MultiFinger.Models.Figures">
+
+    <converters:ArgbColorBrushConverter x:Key="ArgbColorBrushConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <DataTemplate DataType="{x:Type figures:FigurePoint}">
+        <Ellipse
+            Fill="{Binding ArgbColor, Mode=OneTime, Converter={StaticResource ArgbColorBrushConverter}}"
+            Stroke="{Binding ArgbColor, Mode=OneTime, Converter={StaticResource ArgbColorBrushConverter}}"
+            ToolTip="{Binding ToolTip}" />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type figures:Line}">
+        <Polyline
+            Points="{Binding Points, Mode=OneTime}"
+            Stretch="Fill"
+            Stroke="{Binding ArgbColor, Mode=OneTime, Converter={StaticResource ArgbColorBrushConverter}}"
+            ToolTip="{Binding ToolTip}" />
+    </DataTemplate>
+    
+    <Style x:Key="FigureContentControlStyle" TargetType="ContentControl">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <ContentPresenter
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:GraphicViewer">
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="ContentControlStyle" Value="{StaticResource FigureContentControlStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:GraphicViewer">
+                    <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{TemplateBinding Background}">
+                        <Rectangle
+                            Width="1"
+                            Height="Auto"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Stretch"
+                            Fill="LightGray"
+                            StrokeThickness="0.5"
+                            Visibility="{Binding IsVisibleAxisY, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <Rectangle
+                            Width="Auto"
+                            Height="1"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Fill="LightGray"
+                            StrokeThickness="0.5"
+                            Visibility="{Binding IsVisibleAxisX, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <Canvas
+                            x:Name="RootCanvas"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
