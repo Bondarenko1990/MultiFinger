@@ -1,14 +1,9 @@
-﻿using MultiFinger.Enums;
-using System.Windows;
-using System.Text.Json.Serialization;
+﻿using System.Windows;
 
 namespace MultiFinger.Models.Figures
 {
     public abstract class FigureBase
     {
-        public FigureType Type { get; set; }
-
-        [JsonPropertyName("color")]
         public string ArgbColor { get; set; }
 
         public string ToolTip { get; set; }
