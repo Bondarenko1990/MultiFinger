@@ -13,7 +13,7 @@ namespace MultiFinger.ViewModels
         private readonly ITextFileService _fileService;
 
         // Change this to the path of your data.txt file
-        private string _filePath = @"C:\Temp\data_transformed.txt";
+        private string _filePath = @"C:\Temp\data.txt";
 
         private int _selectedIndex;
         private List<FigureBase> _displayedFigures;
