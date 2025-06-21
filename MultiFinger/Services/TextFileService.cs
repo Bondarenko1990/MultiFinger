@@ -13,10 +13,10 @@ namespace MultiFinger.Services
         private const string GreenColor = "255; 2; 249; 77";
         private const string RedColor = "255; 255; 0; 0";
 
-        public async Task<Dictionary<FingerTrace, List<FigureBase>>> ParseFileAsync(string path)
+        public async Task<Dictionary<FingerTrace, List<FigureBase>>> ParseFileAsync(string filePath)
         {
-            string filePath = string.IsNullOrWhiteSpace(path) ? "C:\\Temp\\data.txt" : path;
-            var sampleFigures = new Dictionary<FingerTrace, List<FigureBase>>();
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
 
             const int count = 40;
             var samples = new Dictionary<int, List<double>>();
@@ -50,9 +50,10 @@ namespace MultiFinger.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error reading file: {ex.Message}");
-                return sampleFigures;
+                throw new IOException($"Could not read the file '{filePath}'. {ex.Message}", ex);
             }
+
+            var figuresByTrace = new Dictionary<FingerTrace, List<FigureBase>>();
 
             for (int i = 0; i < samples.Count; i++)
             {
@@ -152,15 +153,16 @@ namespace MultiFinger.Services
                     OffsetFromCenter = offsetMagnitude,
                 };
 
-                sampleFigures.Add(fingerTrace, figures);
+                figuresByTrace.Add(fingerTrace, figures);
             }
 
-            return sampleFigures;
+            return figuresByTrace;
         }
 
-        public async Task<bool> SaveFileAsync(string path)
+        public async Task<bool> SaveFileAsync(string filePath)
         {
-            string filePath = string.IsNullOrWhiteSpace(path) ? "C:\\Temp\\data.txt" : path;
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
 
             const int count = 40;
             var samples = new Dictionary<int, List<double>>();
@@ -194,8 +196,7 @@ namespace MultiFinger.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error reading file: {ex.Message}");
-                return false;
+                throw new IOException($"Could not read the file '{filePath}'. {ex.Message}", ex);
             }
 
             // Prepare lines to write
@@ -253,8 +254,7 @@ namespace MultiFinger.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error writing file: {ex.Message}");
-                return false;
+                throw new IOException($"Error writing file: {ex.Message}", ex);
             }
 
             return true;

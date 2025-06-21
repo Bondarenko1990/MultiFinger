@@ -22,7 +22,7 @@
             Stroke="{Binding ArgbColor, Mode=OneTime, Converter={StaticResource ArgbColorBrushConverter}}"
             ToolTip="{Binding ToolTip}" />
     </DataTemplate>
-    
+
     <Style x:Key="FigureContentControlStyle" TargetType="ContentControl">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />

@@ -5,9 +5,9 @@ namespace MultiFinger.Views
     /// <summary>
     /// Interaction logic for DrawFiguresView.xaml
     /// </summary>
-    public partial class DrawFiguresView : UserControl
+    public partial class FingersView : UserControl
     {
-        public DrawFiguresView()
+        public FingersView()
         {
             InitializeComponent();
         }

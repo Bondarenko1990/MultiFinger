@@ -1,7 +1,4 @@
-﻿using Prism.Ioc;
-using Prism.Modularity;
-using Prism.Regions;
-using MultiFinger.Models.Navigation;
+﻿using MultiFinger.Models.Navigation;
 using MultiFinger.Views;
 
 namespace MultiFinger.Modules
@@ -17,12 +14,12 @@ namespace MultiFinger.Modules
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            _regionManager.RequestNavigate(RegionNames.MainRegionName, ViewNames.DrawFiguresViewName);
+            _regionManager.RequestNavigate(RegionNames.MainRegionName, ViewNames.FingersViewName);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<DrawFiguresView>();
+            containerRegistry.RegisterForNavigation<FingersView>();
         }
     }
 }

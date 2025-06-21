@@ -8,6 +8,6 @@ namespace MultiFinger.Models.Navigation
 
     public static class ViewNames
     {
-        public const string DrawFiguresViewName = "DrawFiguresView";
+        public const string FingersViewName = "FingersView";
     }
 }

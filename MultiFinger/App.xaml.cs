@@ -1,8 +1,5 @@
 ﻿using System.Windows;
 using MultiFinger.ViewModels;
-using Prism.Unity;
-using Prism.Ioc;
-using Prism.Modularity;
 using MultiFinger.Modules;
 using MultiFinger.Views;
 using MultiFinger.Models.Interfaces;
@@ -17,7 +14,7 @@ namespace MultiFinger
     { 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<DrawFiguresViewModel>();
+            containerRegistry.Register<FingersViewModel>();
 
             containerRegistry.Register<ITextFileService, TextFileService>();
         }
